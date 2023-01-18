@@ -16,6 +16,9 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/rest/tracing/jaegerclient"
+	"github.com/uber/jaeger-client-go"
+	jaegerconfig "github.com/uber/jaeger-client-go/config"
 	"net/http"
 	"path"
 
@@ -34,7 +37,6 @@ import (
 	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/api/telemetry"
 	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/config"
 	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/rest"
-	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/rest/middleware"
 	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/rest/tracing"
 	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/storegw"
 )
@@ -51,6 +53,13 @@ type APIServer struct {
 func NewAPIServer(ctx context.Context, addr string, addrIPv6 string) (*APIServer, error) {
 	gin.SetMode(gin.ReleaseMode)
 	engine := gin.Default()
+	engine.Use(jaegerclient.Tracer("goodsService", &jaegerconfig.SamplerConfig{
+		Type:  jaeger.SamplerTypeConst,
+		Param: 1,
+	}, &jaegerconfig.ReporterConfig{
+		LogSpans:          true,
+		CollectorEndpoint: "http://192.168.200.100:14268/api/traces",
+	}, jaegerconfig.Logger(jaeger.StdLogger)))
 
 	srv := &http.Server{Addr: addr, Handler: engine}
 
@@ -99,6 +108,8 @@ func (a *APIServer) newRoutes(engine *gin.Engine) {
 	)
 
 	engine.Use(requestIdMiddleware, cors.Default())
+	//engine.Use(otelgin.Middleware("bcs-monitor"))
+	//engine.Use(tracing.NewHandlerWrapper())
 
 	// openapi 文档
 	// 访问 swagger/index.html, swagger/doc.json
@@ -120,7 +131,7 @@ func (a *APIServer) newRoutes(engine *gin.Engine) {
 
 func registerRoutes(engine *gin.RouterGroup) {
 	// 日志相关接口
-	engine.Use(middleware.AuthRequired())
+	//engine.Use(middleware.AuthRequired())
 
 	route := engine.Group("/projects/:projectId/clusters/:clusterId")
 	{
@@ -139,8 +150,9 @@ func registerRoutes(engine *gin.RouterGroup) {
 // registerMetricsRoutes metrics 相关接口
 func registerMetricsRoutes(engine *gin.RouterGroup) {
 
-	engine.Use(middleware.AuthRequired())
-
+	//engine.Use(middleware.AuthRequired())
+	//engine.Use(otelgin.Middleware("bcs-monitor"))
+	//engine.Use(tracing.NewHandlerWrapper())
 	// 命名规范
 	// usage 代表 百分比
 	// used 代表已使用

@@ -46,6 +46,7 @@ type Configuration struct {
 	BCSEnvMap   map[BCSClusterEnv]*BCSConf `yaml:"-"`
 	Web         *WebConf                   `yaml:"web"`
 	QueryStore  *QueryStoreConf            `yaml:"query_store_conf"`
+	TracingConf *TracingConf               `yaml:"tracing_conf"`
 }
 
 // init 初始化
@@ -58,13 +59,13 @@ func (c *Configuration) init() error {
 		return err
 	}
 
-	if err := c.BCS.InitJWTPubKey(); err != nil {
-		return err
-	}
-
-	if err := c.BKAPIGW.InitJWTPubKey(); err != nil {
-		return err
-	}
+	//if err := c.BCS.InitJWTPubKey(); err != nil {
+	//	return err
+	//}
+	//
+	//if err := c.BKAPIGW.InitJWTPubKey(); err != nil {
+	//	return err
+	//}
 
 	// 把列表类型转换为map，方便检索
 	for _, conf := range c.BCSEnvConf {
@@ -75,6 +76,21 @@ func (c *Configuration) init() error {
 		return err
 	}
 
+	//opts := []trace.Option{}
+	//opts = append(opts, trace.TracerSwitch("on"))
+	//opts = append(opts, trace.TracerType("jaeger"))
+	//opts = append(opts, trace.ExporterURL("http://192.168.37.160:14268/api/traces"))
+	//tp, err := trace.InitTracerProvider("bcs-monitor", opts...)
+	//if err != nil {
+	//	log.Fatal(errors.New("initTracingInstance failed"))
+	//}
+	//
+	//defer func() {
+	//	if err := tp.Shutdown(context.Background()); err != nil {
+	//		log.Fatal(err)
+	//	}
+	//}()
+	//otel.SetTracerProvider(tp)
 	return nil
 }
 
@@ -118,6 +134,7 @@ func newConfiguration() (*Configuration, error) {
 
 	c.BKMonitor = defaultBKMonitorConf()
 
+	c.TracingConf = &TracingConf{}
 	return c, nil
 }
 

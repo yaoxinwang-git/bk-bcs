@@ -27,7 +27,8 @@ func getQueryURL() (string, http.Header) {
 		url = config.G.BCS.QueryURL
 	} else {
 		// 集群内, 走 service 接口
-		url = "http://bcs-monitor-query"
+		//url = "http://bcs-monitor-query"
+		url = "http://192.168.37.160:9090"
 
 		// url = fmt.Sprintf("%s/bcsapi/v4/monitor/query", config.G.BCS.Host)
 		// header.Add("Authorization", fmt.Sprintf("Bearer %s", config.G.BCS.Token))

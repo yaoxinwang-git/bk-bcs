@@ -109,11 +109,12 @@ func GetRestContext(c *gin.Context) (*Context, error) {
 // RestHandlerFunc rest handler
 func RestHandlerFunc(handler HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		restContext, err := GetRestContext(c)
-		if err != nil {
-			AbortWithUnauthorizedError(InitRestContext(c), err)
-			return
-		}
+		//restContext, err := GetRestContext(c)
+		//if err != nil {
+		//	AbortWithUnauthorizedError(InitRestContext(c), err)
+		//	return
+		//}
+		restContext := InitRestContext(c)
 		result, err := handler(restContext)
 		if err != nil {
 			AbortWithJSONError(restContext, err)
