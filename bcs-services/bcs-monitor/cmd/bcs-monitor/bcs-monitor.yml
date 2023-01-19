@@ -1,0 +1,73 @@
+base_conf:
+  app_code: "xx"
+  app_secret: "xx"
+  time_zone: "Asia/Shanghai"
+  language_code: en
+  run_env: dev
+  managers: []
+
+logging:
+  stdout: true
+  level: info
+  format: logfmt
+  filename: ""
+  max_size: 1024 # 单位 Mb
+  max_age: 1 # 单位天
+  max_backups: 7
+
+redis:
+  host: xx
+  port: 6380
+  password: xx
+  db: 0
+
+
+auth_conf:
+  host: xx
+  is_gateway: xx
+  ssm_host: ""
+
+bkapigw_conf:
+  host: "http://xx"
+  jwt_public_key: xx
+
+bcs_conf: {}
+
+
+web:
+  route_prefix: "/bcsapi/v4/monitor"
+  host: http://localhost:11902
+
+query_conf:
+  host: http://localhost:11902
+
+
+query_store_conf:
+  static_configs:
+    - targets:
+        - localhost:30911
+  # http_sd_configs:
+  #   - url: xx
+  #     bearer_token: xx
+
+storegw:
+  - type: BCS_SYSTEM
+    config: {}
+
+etcd:
+  endpoints: ""
+  ca: ""
+  cert: ""
+  key: ""
+
+
+## TRACING 相关配置
+#tracing_conf:
+#  tracingEnabled: true
+#  exporterURL: "http://192.168.37.160:14268/api/traces"
+# TRACING 相关配置
+tracing:
+  tracingSwitch: "on"
+  tracingType: "jaeger"
+  serviceName: "bcs-monitor"
+  exporterURL: "http://192.168.37.160:14268/api/traces"

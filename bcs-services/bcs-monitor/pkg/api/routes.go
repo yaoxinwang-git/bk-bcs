@@ -16,6 +16,7 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/rest/middleware"
 	"net/http"
 	"path"
 
@@ -34,7 +35,6 @@ import (
 	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/api/telemetry"
 	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/config"
 	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/rest"
-	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/rest/middleware"
 	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/rest/tracing"
 	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/storegw"
 )
@@ -139,8 +139,8 @@ func registerRoutes(engine *gin.RouterGroup) {
 // registerMetricsRoutes metrics 相关接口
 func registerMetricsRoutes(engine *gin.RouterGroup) {
 
-	engine.Use(middleware.AuthRequired())
-
+	//engine.Use(middleware.AuthRequired())
+	engine.Use(tracing.NewHandlerWrapper())
 	// 命名规范
 	// usage 代表 百分比
 	// used 代表已使用

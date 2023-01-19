@@ -16,15 +16,15 @@ package main
 import (
 	"context"
 	"fmt"
-
+	"github.com/Tencent/bk-bcs/bcs-common/common/version"
+	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/api"
+	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/config"
+	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/discovery"
 	"github.com/TencentBlueKing/bkmonitor-kits/logger"
 	"github.com/oklog/run"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-
-	"github.com/Tencent/bk-bcs/bcs-common/common/version"
-	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/api"
-	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/discovery"
+	"go.opentelemetry.io/otel"
 )
 
 // APIServerCmd :
@@ -48,13 +48,31 @@ func APIServerCmd() *cobra.Command {
 func runAPIServer(ctx context.Context, g *run.Group, opt *option) error {
 	logger.Infow("listening for requests and metrics", "address", httpAddress)
 	addrIPv6 := getIPv6AddrFromEnv(httpAddress)
-	server, err := api.NewAPIServer(ctx, httpAddress, addrIPv6)
+
+	tp, err := config.InitTracingInstance(config.G.TracingConf)
+	if err != nil {
+		logger.Errorf("initTracingInstance failed: %v", err.Error())
+	}
+
+	defer func() {
+		if err := tp.Shutdown(context.Background()); err != nil {
+			logger.Fatal(err)
+		}
+	}()
+	otel.SetTracerProvider(tp)
+	newCtx, span := otel.Tracer("bcs-monitor1").Start(context.Background(), "bcs-monitor-api")
+	//ctx := gin.Context{}
+	//span := trace.SpanFromContext(ctx)
+	//span.SetStatus(codes.Error, "operationThatCouldFail failed")
+	//span.SetAttributes(attribute.Bool("isTrue", true), attribute.String("stringAttr", "hi!"))
+	defer span.End()
+	server, err := api.NewAPIServer(newCtx, httpAddress, addrIPv6)
 	if err != nil {
 		return errors.Wrap(err, "apiserver")
 	}
 
 	sdName := fmt.Sprintf("%s-%s", appName, "api")
-	sd, err := discovery.NewServiceDiscovery(ctx, sdName, version.BcsVersion, httpAddress, advertiseAddress, addrIPv6)
+	sd, err := discovery.NewServiceDiscovery(newCtx, sdName, version.BcsVersion, httpAddress, advertiseAddress, addrIPv6)
 	if err != nil {
 		return err
 	}
@@ -62,6 +80,6 @@ func runAPIServer(ctx context.Context, g *run.Group, opt *option) error {
 	// 启动 apiserver
 	g.Add(server.Run, func(err error) { server.Close() })
 	g.Add(sd.Run, func(error) {})
-
+	span.End()
 	return nil
 }

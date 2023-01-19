@@ -17,6 +17,9 @@ package bcs
 import (
 	"context"
 	"fmt"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
 	"time"
 
 	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/component"
@@ -43,6 +46,12 @@ func (c *Cluster) String() string {
 func ListClusters(ctx context.Context, bcsConf *config.BCSConf, projectId string) ([]*Cluster, error) {
 	url := fmt.Sprintf("%s/bcsapi/v4/clustermanager/v1/cluster", bcsConf.Host)
 
+	_, span := otel.Tracer("bcs-monitoryxw").Start(ctx, "bcs-monitor-api222")
+	//ctx := gin.Context{}
+	//span := trace.SpanFromContext(ctx)
+	span.SetStatus(codes.Error, "operationThatCouldFail failed")
+	span.SetAttributes(attribute.Bool("isTrue", true), attribute.String("stringAttr", "hi!"))
+	defer span.End()
 	resp, err := component.GetClient().R().
 		SetContext(ctx).
 		SetAuthToken(bcsConf.Token).

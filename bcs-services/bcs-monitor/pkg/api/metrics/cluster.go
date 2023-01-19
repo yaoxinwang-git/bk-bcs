@@ -123,7 +123,6 @@ func GetClusterOverview(c *rest.Context) (interface{}, error) {
 // @Router  /cpu_usage [get]
 func ClusterCPUUsage(c *rest.Context) (interface{}, error) {
 	promql := `bcs:cluster:cpu:usage{cluster_id="%<clusterId>s", %<provider>s}`
-
 	return handleClusterMetric(c, promql)
 
 }

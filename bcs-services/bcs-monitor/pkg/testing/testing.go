@@ -55,7 +55,8 @@ func GetTestUsername() string {
 func GetTestConfigFile() string {
 	configPath := os.Getenv("TEST_CONFIG_FILE")
 	if configPath == "" {
-		return "./etc/config_dev.yaml"
+		//return "./etc/config_dev.yaml"
+		return "./etc/bcs-monitor.yml"
 	}
 	return configPath
 }

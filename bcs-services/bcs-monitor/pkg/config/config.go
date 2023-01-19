@@ -46,6 +46,7 @@ type Configuration struct {
 	BCSEnvMap   map[BCSClusterEnv]*BCSConf `yaml:"-"`
 	Web         *WebConf                   `yaml:"web"`
 	QueryStore  *QueryStoreConf            `yaml:"query_store_conf"`
+	TracingConf *TracingConf               `yaml:"tracing_conf"`
 }
 
 // init 初始化
@@ -58,13 +59,13 @@ func (c *Configuration) init() error {
 		return err
 	}
 
-	if err := c.BCS.InitJWTPubKey(); err != nil {
-		return err
-	}
-
-	if err := c.BKAPIGW.InitJWTPubKey(); err != nil {
-		return err
-	}
+	//if err := c.BCS.InitJWTPubKey(); err != nil {
+	//	return err
+	//}
+	//
+	//if err := c.BKAPIGW.InitJWTPubKey(); err != nil {
+	//	return err
+	//}
 
 	// 把列表类型转换为map，方便检索
 	for _, conf := range c.BCSEnvConf {
@@ -118,6 +119,7 @@ func newConfiguration() (*Configuration, error) {
 
 	c.BKMonitor = defaultBKMonitorConf()
 
+	c.TracingConf = defaultTracingConf()
 	return c, nil
 }
 
