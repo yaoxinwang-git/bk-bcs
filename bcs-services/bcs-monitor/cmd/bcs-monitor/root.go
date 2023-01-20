@@ -135,6 +135,7 @@ func initConfig() {
 	if err := watch.MultiCredWatch(certCfgFiles); err != nil {
 		logger.Fatal(err.Error())
 	}
+
 }
 
 // VersionCmd 展示版本号

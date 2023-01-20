@@ -16,6 +16,11 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/rest/middleware"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	oteltrace "go.opentelemetry.io/otel/trace"
 	"net/http"
 	"path"
 
@@ -34,7 +39,6 @@ import (
 	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/api/telemetry"
 	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/config"
 	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/rest"
-	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/rest/middleware"
 	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/rest/tracing"
 	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/storegw"
 )
@@ -51,7 +55,7 @@ type APIServer struct {
 func NewAPIServer(ctx context.Context, addr string, addrIPv6 string) (*APIServer, error) {
 	gin.SetMode(gin.ReleaseMode)
 	engine := gin.Default()
-
+	//engine.Use(otelgin.Middleware("my-server"))
 	srv := &http.Server{Addr: addr, Handler: engine}
 
 	s := &APIServer{
@@ -61,7 +65,6 @@ func NewAPIServer(ctx context.Context, addr string, addrIPv6 string) (*APIServer
 		addrIPv6: addrIPv6,
 	}
 	s.newRoutes(engine)
-
 	return s, nil
 }
 
@@ -79,6 +82,18 @@ func (a *APIServer) Run() error {
 		logger.Infof("api serve dualStackListener with ipv6: %s", a.addrIPv6)
 	}
 
+	//tp, err := config.InitTracingInstance(config.G.TracingConf)
+	//if err != nil {
+	//	logger.Errorf("initTracingInstance failed: %v", err.Error())
+	//}
+	//
+	//defer func() {
+	//	if err := tp.Shutdown(context.Background()); err != nil {
+	//		logger.Printf("Error shutting down tracer provider: %v", err)
+	//	}
+	//}()
+	//a.engine.Use(otelgin.Middleware("monitor-api"))
+	//newCtx, span := otel.Tracer("bcs-monitor1").Start(context.Background(), "bcs-monitor-api")
 	return a.srv.Serve(dualStackListener)
 }
 
@@ -99,7 +114,7 @@ func (a *APIServer) newRoutes(engine *gin.Engine) {
 	)
 
 	engine.Use(requestIdMiddleware, cors.Default())
-
+	engine.Use(otelgin.Middleware("my-server-yxw"))
 	// openapi 文档
 	// 访问 swagger/index.html, swagger/doc.json
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
@@ -107,7 +122,7 @@ func (a *APIServer) newRoutes(engine *gin.Engine) {
 	engine.GET("/-/ready", ReadyHandler)
 
 	// 注册 HTTP 请求
-	registerRoutes(engine.Group(""))
+	//registerRoutes(engine.Group(""))
 	registerMetricsRoutes(engine.Group(""))
 
 	if config.G.Web.RoutePrefix != "" {
@@ -136,20 +151,44 @@ func registerRoutes(engine *gin.RouterGroup) {
 	}
 }
 
+var tracer = otel.Tracer("bcs-monitor-api-cluster")
+
+func getUser(c *gin.Context, id string) string {
+	// Pass the built-in `context.Context` object from http.Request to OpenTelemetry APIs
+	// where required. It is available from gin.Context.Request.Context()
+	projectCode, _ := c.Params.Get("projectCode")
+	_, span := tracer.Start(c.Request.Context(), "getUser", oteltrace.WithAttributes(attribute.String("id", projectCode)))
+	defer span.End()
+	if id == "123" {
+		return "otelgin tester"
+	}
+	return "yxwtest"
+}
+
 // registerMetricsRoutes metrics 相关接口
 func registerMetricsRoutes(engine *gin.RouterGroup) {
 
-	engine.Use(middleware.AuthRequired())
+	//engine.Use(middleware.AuthRequired())
+	//engine.Use(tracing.NewHandlerWrapper())
 
 	// 命名规范
 	// usage 代表 百分比
 	// used 代表已使用
 	// overview, info 数值量
-
+	engine.Use(otelgin.Middleware("my-server"))
 	route := engine.Group("/metrics/projects/:projectCode/clusters/:clusterId")
+
 	{
 		route.GET("/overview", rest.RestHandlerFunc(metrics.GetClusterOverview))
-		route.GET("/cpu_usage", rest.RestHandlerFunc(metrics.ClusterCPUUsage))
+		route.GET("/cpu_usage", func(c *gin.Context) {
+			id := c.Param("id")
+			name := getUser(c, id)
+			//otelgin.HTML(c, http.StatusOK, tmplName, gin.H{
+			//	"name": name,
+			//	"id":   id,
+			//})
+			c.JSON(200, name)
+		})
 		route.GET("/cpu_request_usage", rest.RestHandlerFunc(metrics.ClusterCPURequestUsage))
 		route.GET("/memory_usage", rest.RestHandlerFunc(metrics.ClusterMemoryUsage))
 		route.GET("/memory_request_usage", rest.RestHandlerFunc(metrics.ClusterMemoryRequestUsage))
