@@ -58,12 +58,11 @@ func runAPIServer(ctx context.Context, g *run.Group, opt *option) error {
 		return err
 	}
 
-	g.Add(sd.Run, func(error) {})
 	// 启动 apiserver
 	g.Add(server.Run, func(err error) {
 		server.Close()
 	})
-
+	g.Add(sd.Run, func(error) {})
 	//server.RunTrace(httpAddress)
 
 	return nil

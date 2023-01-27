@@ -63,16 +63,6 @@ func NewAPIServer(ctx context.Context, addr string, addrIPv6 string) (*APIServer
 		srv:      srv,
 		addrIPv6: addrIPv6,
 	}
-	tp, err := config.InitTracingInstance(config.G.TracingConf)
-	if err != nil {
-		logger.Errorf("initTracingInstance failed: %v", err.Error())
-	}
-
-	defer func() {
-		if err := tp.Shutdown(context.Background()); err != nil {
-			logger.Printf("Error shutting down tracer provider: %v", err)
-		}
-	}()
 
 	//engine.GET("/cpu_usage", func(c *gin.Context) {
 	//	id := c.Param("id")
@@ -87,9 +77,9 @@ func NewAPIServer(ctx context.Context, addr string, addrIPv6 string) (*APIServer
 	s.newRoutes(engine)
 	//engine.Run(addr)
 	//_ = engine.Run(":19999")
-	go func() {
-		_ = engine.Run(":19999")
-	}()
+	//go func() {
+	//	_ = engine.Run(":19999")
+	//}()
 	return s, nil
 }
 
@@ -106,12 +96,30 @@ func (a *APIServer) Run() error {
 		}
 		logger.Infof("api serve dualStackListener with ipv6: %s", a.addrIPv6)
 	}
-	//err := a.engine.Run(a.srv.Addr)
+
+	tp, err := config.InitTracingInstance(config.G.TracingConf)
+	if err != nil {
+		logger.Errorf("initTracingInstance failed: %v", err.Error())
+	}
+
+	defer func() {
+		if err := tp.Shutdown(context.Background()); err != nil {
+			logger.Printf("Error shutting down tracer provider: %v", err)
+		}
+	}()
+	//err = a.engine.Run(a.srv.Addr)
 	//if err != nil {
 	//	fmt.Errorf(err.Error())
 	//}
-	err := a.srv.Serve(dualStackListener)
 
+	err = a.srv.Serve(dualStackListener)
+	if err != nil {
+		fmt.Errorf(err.Error())
+	}
+	//err = a.engine.Run(a.srv.Addr)
+	//if err != nil {
+	//	fmt.Errorf(err.Error())
+	//}
 	return err
 }
 
@@ -150,6 +158,8 @@ func (a *APIServer) newRoutes(engine *gin.Engine) {
 	}
 	registerRoutes(engine.Group(path.Join(config.G.Web.RoutePrefix, config.APIServicePrefix)))
 	registerMetricsRoutes(engine.Group(path.Join(config.G.Web.RoutePrefix, config.APIServicePrefix)))
+
+	//_ = engine.Run(":19999")
 }
 
 func (s *APIServer) RunTrace(addr string) {

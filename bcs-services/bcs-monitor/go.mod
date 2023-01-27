@@ -38,6 +38,7 @@ require (
 	github.com/swaggo/swag v1.8.1
 	github.com/thanos-io/thanos v0.26.0
 	go-micro.dev/v4 v4.8.1
+	go.opentelemetry.io/otel/exporters/jaeger v1.3.0
 	go.uber.org/automaxprocs v1.5.1
 	google.golang.org/grpc v1.47.0
 	gopkg.in/yaml.v2 v2.4.0
@@ -46,12 +47,6 @@ require (
 	k8s.io/apimachinery v0.23.1
 	k8s.io/client-go v0.23.1
 	k8s.io/klog/v2 v2.60.1
-)
-
-require (
-	github.com/openzipkin/zipkin-go v0.3.0 // indirect
-	go.opentelemetry.io/otel/exporters/jaeger v1.3.0 // indirect
-	go.opentelemetry.io/otel/exporters/zipkin v1.3.0 // indirect
 )
 
 require (
@@ -181,9 +176,8 @@ require (
 	go.opentelemetry.io/contrib/propagators/ot v1.4.0 // indirect
 	go.opentelemetry.io/otel v1.5.0
 	go.opentelemetry.io/otel/bridge/opentracing v1.5.0 // indirect
-	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.5.0
 	go.opentelemetry.io/otel/sdk v1.5.0
-	go.opentelemetry.io/otel/trace v1.5.0 // indirect
+	go.opentelemetry.io/otel/trace v1.5.0
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/goleak v1.1.12 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
