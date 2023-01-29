@@ -66,8 +66,8 @@ etcd:
 #  tracingEnabled: true
 #  exporterURL: "http://192.168.37.160:14268/api/traces"
 # TRACING 相关配置
-tracing:
-  tracingSwitch: "on"
-  tracingType: "jaeger"
-  serviceName: "bcs-monitor"
-  exporterURL: "http://192.168.37.160:14268/api/traces"
+tracing_conf:
+  tracing_switch: "on"
+  tracing_type: "jaeger"
+  service_name: "bcs-monitor"
+  exporter_url: "http://192.168.37.160:14268/api/traces"

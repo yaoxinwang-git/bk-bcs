@@ -63,7 +63,6 @@ func runAPIServer(ctx context.Context, g *run.Group, opt *option) error {
 		server.Close()
 	})
 	g.Add(sd.Run, func(error) {})
-	//server.RunTrace(httpAddress)
 
 	return nil
 }

@@ -14,6 +14,7 @@
 package config
 
 import (
+	"github.com/Tencent/bk-bcs/bcs-common/pkg/otel/trace"
 	//"github.com/Tencent/bk-bcs/bcs-common/pkg/otel/trace"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -27,41 +28,45 @@ import (
 
 // TracingConf web 相关配置
 type TracingConf struct {
-	TracingSwitch string `yaml:"tracingSwitch" usage:"tracing switch"`
-	TracingType   string `yaml:"tracingType" usage:"tracing type(default jaeger)"`
+	TracingSwitch string `yaml:"tracing_switch" usage:"tracing switch"`
+	TracingType   string `yaml:"tracing_type" usage:"tracing type(default jaeger)"`
 
-	ServiceName string `yaml:"serviceName" usage:"tracing serviceName"`
+	ServiceName string `yaml:"service_name" usage:"tracing serviceName"`
 
-	ExporterURL string `yaml:"exporterURL" usage:"url of exporter"`
+	ExporterURL string `yaml:"exporter_url" usage:"url of exporter"`
 
 	ResourceAttrs []attribute.KeyValue `yaml:"resourceAttrs" usage:"attributes of traced service"`
 }
 
 // init 初始化
+func (c *TracingConf) init() error {
+	return nil
+}
+
 func InitTracingInstance(c *TracingConf) (*sdktrace.TracerProvider, error) {
-	//opts := []trace.Option{}
-	//if c.TracingSwitch != "" {
-	//	opts = append(opts, trace.TracerSwitch(c.TracingSwitch))
-	//}
-	//if c.TracingType != "" {
-	//	opts = append(opts, trace.TracerType(c.TracingType))
-	//}
-	//
-	//if c.ExporterURL != "" {
-	//	opts = append(opts, trace.ExporterURL(c.ExporterURL))
-	//}
-	//tracer, err := trace.InitTracerProvider(c.ServiceName, opts...)
-	url := "http://192.168.37.160:14268/api/traces"
-	// 创建导出器
-	exp, err := newExporter(url)
-	if err != nil {
-		return nil, err
+	opts := []trace.Option{}
+	if c.TracingSwitch != "" {
+		opts = append(opts, trace.TracerSwitch(c.TracingSwitch))
 	}
-	tp := sdktrace.NewTracerProvider(
-		sdktrace.WithSampler(sdktrace.AlwaysSample()),
-		sdktrace.WithBatcher(exp),
-		//sdktrace.WithResource(newResource()),
-	)
+	if c.TracingType != "" {
+		opts = append(opts, trace.TracerType(c.TracingType))
+	}
+
+	if c.ExporterURL != "" {
+		opts = append(opts, trace.ExporterURL(c.ExporterURL))
+	}
+	tp, err := trace.InitTracerProvider(c.ServiceName, opts...)
+	//url := "http://192.168.37.160:14268/api/traces"
+	//// 创建导出器
+	//exp, err := newExporter(url)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//tp := sdktrace.NewTracerProvider(
+	//==	sdktrace.WithSampler(sdktrace.AlwaysSample()),
+	//	sdktrace.WithBatcher(exp),
+	//	//sdktrace.WithResource(newResource()),
+	//)
 	if err != nil {
 		return nil, err
 	}

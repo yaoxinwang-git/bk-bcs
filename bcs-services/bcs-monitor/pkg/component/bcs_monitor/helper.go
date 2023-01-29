@@ -13,6 +13,7 @@
 package bcsmonitor
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/config"
@@ -54,4 +55,11 @@ func GetLabelSet(vector model.Vector) map[string]string {
 		labelSet[string(k)] = string(v)
 	}
 	return labelSet
+}
+
+// MapToJson map转string
+func MapToJson(param map[string]interface{}) string {
+	dataType, _ := json.Marshal(param)
+	dataString := string(dataType)
+	return dataString
 }

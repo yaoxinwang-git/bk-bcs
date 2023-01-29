@@ -76,6 +76,9 @@ func (c *Configuration) init() error {
 		return err
 	}
 
+	//if err := c.TracingConf.init(); err != nil {
+	//	return err
+	//}
 	return nil
 }
 
@@ -120,6 +123,7 @@ func newConfiguration() (*Configuration, error) {
 	c.BKMonitor = defaultBKMonitorConf()
 
 	c.TracingConf = defaultTracingConf()
+
 	return c, nil
 }
 

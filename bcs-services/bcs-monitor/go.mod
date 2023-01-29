@@ -50,6 +50,11 @@ require (
 )
 
 require (
+	github.com/openzipkin/zipkin-go v0.3.0 // indirect
+	go.opentelemetry.io/otel/exporters/zipkin v1.3.0 // indirect
+)
+
+require (
 	cloud.google.com/go/compute v1.5.0 // indirect
 	cloud.google.com/go/iam v0.3.0 // indirect
 	cloud.google.com/go/trace v0.1.0 // indirect

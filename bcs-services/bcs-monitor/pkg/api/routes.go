@@ -26,9 +26,6 @@ import (
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
-	oteltrace "go.opentelemetry.io/otel/trace"
 	"net/http"
 	"path"
 
@@ -64,22 +61,7 @@ func NewAPIServer(ctx context.Context, addr string, addrIPv6 string) (*APIServer
 		addrIPv6: addrIPv6,
 	}
 
-	//engine.GET("/cpu_usage", func(c *gin.Context) {
-	//	id := c.Param("id")
-	//	name := getUser(c, id)
-	//	//otelgin.HTML(c, http.StatusOK, tmplName, gin.H{
-	//	//	"name": name,
-	//	//	"id":   id,
-	//	//})
-	//	c.JSON(200, name+"yxw123")
-	//})
-
 	s.newRoutes(engine)
-	//engine.Run(addr)
-	//_ = engine.Run(":19999")
-	//go func() {
-	//	_ = engine.Run(":19999")
-	//}()
 	return s, nil
 }
 
@@ -116,10 +98,6 @@ func (a *APIServer) Run() error {
 	if err != nil {
 		fmt.Errorf(err.Error())
 	}
-	//err = a.engine.Run(a.srv.Addr)
-	//if err != nil {
-	//	fmt.Errorf(err.Error())
-	//}
 	return err
 }
 
@@ -150,7 +128,6 @@ func (a *APIServer) newRoutes(engine *gin.Engine) {
 	// 注册 HTTP 请求
 	registerRoutes(engine.Group(""))
 	registerMetricsRoutes(engine.Group(""))
-	//engine.Use(otelgin.Middleware("my-server"))
 
 	if config.G.Web.RoutePrefix != "" {
 		registerRoutes(engine.Group(config.G.Web.RoutePrefix))
@@ -159,14 +136,6 @@ func (a *APIServer) newRoutes(engine *gin.Engine) {
 	registerRoutes(engine.Group(path.Join(config.G.Web.RoutePrefix, config.APIServicePrefix)))
 	registerMetricsRoutes(engine.Group(path.Join(config.G.Web.RoutePrefix, config.APIServicePrefix)))
 
-	//_ = engine.Run(":19999")
-}
-
-func (s *APIServer) RunTrace(addr string) {
-	err := s.engine.Run(addr)
-	if err != nil {
-		fmt.Errorf(err.Error())
-	}
 }
 
 func registerRoutes(engine *gin.RouterGroup) {
@@ -187,30 +156,7 @@ func registerRoutes(engine *gin.RouterGroup) {
 	}
 }
 
-var tracer = otel.Tracer("bcs-monitor-api-cluster")
-
-func getUser(c *gin.Context, id string) string {
-	// Pass the built-in `context.Context` object from http.Request to OpenTelemetry APIs
-	// where required. It is available from gin.Context.Request.Context()
-	projectCode, _ := c.Params.Get("projectCode")
-	_, span := tracer.Start(c.Request.Context(), "getUser", oteltrace.WithAttributes(attribute.String("id", projectCode)))
-	defer span.End()
-	if id == "123" {
-		return "otelgin tester"
-	}
-	return "yxwtest"
-}
-func registerMetricsRoutesTest(engine *gin.Engine) {
-	engine.GET("/cpu_usage", func(c *gin.Context) {
-		id := c.Param("id")
-		name := getUser(c, id)
-		//otelgin.HTML(c, http.StatusOK, tmplName, gin.H{
-		//	"name": name,
-		//	"id":   id,
-		//})
-		c.JSON(200, name)
-	})
-}
+//var tracer = otel.Tracer("bcs-monitor-api-cluster")
 
 // registerMetricsRoutes metrics 相关接口
 func registerMetricsRoutes(engine *gin.RouterGroup) {

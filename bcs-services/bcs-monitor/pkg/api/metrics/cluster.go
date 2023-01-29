@@ -14,8 +14,6 @@ package metrics
 
 import (
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
-	oteltrace "go.opentelemetry.io/otel/trace"
 	"time"
 
 	bcsmonitor "github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/component/bcs_monitor"
@@ -128,8 +126,8 @@ var tracer = otel.Tracer("bcs-monitor-api-cluster")
 // @Router  /cpu_usage [get]
 func ClusterCPUUsage(c *rest.Context) (interface{}, error) {
 	promql := `bcs:cluster:cpu:usage{cluster_id="%<clusterId>s", %<provider>s}`
-	_, span := tracer.Start(c.Request.Context(), "getUser", oteltrace.WithAttributes(attribute.String("promql", promql)))
-	defer span.End()
+	//_, span := tracer.Start(c.Request.Context(), "ClusterCPUUsage", oteltrace.WithAttributes(attribute.String("promql", promql)))
+	//defer span.End()
 
 	return handleClusterMetric(c, promql)
 
