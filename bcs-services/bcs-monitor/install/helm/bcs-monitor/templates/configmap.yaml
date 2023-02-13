@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bcs-monitor-config
+  namespace: bcs-monitor
+  labels:
+    app: bcs-monitor
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+data:
+  bcs-monitor.yml: |
+    {{- toYaml .Values.config | nindent 4 }}

@@ -1,0 +1,159 @@
+# Default values for bcs-monitor.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  namespace: ""
+  imageRegistry: ""
+  # etcd 依赖配置
+  storage:
+    etcd:
+      endpoints: []
+    redis:
+      password: ""
+  secret:
+    autoGenerate: true
+    #bcs server cert
+    bcsServerCerts: bcs-server-certs
+    #bcs client cert
+    bcsClientCerts: bcs-client-certs
+    #bcs client cert without encrypted
+    bcsClientCertsWithoutEncrypted: bcs-client-certs-without-encrypted
+    #etcd registry cert
+    etcdCerts: bcs-etcd-certs
+    #gateway https cert
+    bcsGatewayCerts: bcs-gateway-certs
+  bkAPP:
+    systemID: ""
+    appCode: ""
+    appSecret: ""
+  bkIAM:
+    gateWayHost: ""
+    iamHost: ""
+    bkiamHost: ""
+  env:
+    BK_BCS_gatewayToken: ""
+    BK_BCS_jwtPublicKey: ""
+
+
+
+
+
+
+
+# webconsole 配置
+config:
+  # my global config
+  base_conf:
+    app_code: "xx"
+    app_secret: "xx"
+    time_zone: "Asia/Shanghai"
+    language_code: en
+    run_env: dev
+    managers: [ ]
+
+  logging:
+    stdout: true
+    level: info
+    format: logfmt
+    filename: ""
+    max_size: 1024 # 单位 Mb
+    max_age: 1 # 单位天
+    max_backups: 7
+
+
+  auth_conf:
+    host: xx
+    is_gateway: xx
+    ssm_host: ""
+
+  bkapigw_conf:
+    host: ""
+    jwt_public_key: ""
+
+  bcs_conf:
+    verify: false
+
+
+  web:
+    route_prefix: "/bcsapi/v4/monitor"
+    host: http://localhost:11902
+
+  query_conf:
+    host: http://localhost:11902
+
+
+  query_store_conf:
+    static_configs:
+      - targets:
+          - localhost:30911
+    # http_sd_configs:
+    #   - url: xx
+    #     bearer_token: xx
+
+  storegw:
+    #- type: BCS_SYSTEM
+    - type: PROMETHEUS
+      config: { }
+
+  etcd:
+    endpoints: ""
+    ca: ""
+    cert: ""
+    key: ""
+
+  tracing_conf:
+    tracing_switch: "on"
+    tracing_type: "jaeger"
+    service_name: "bcs-monitor"
+    exporter_url: "http://192.168.37.150:32666/api/traces"
+
+
+
+image:
+  registry: hub.bktencent.com
+  repository: blueking/bcs-monitor
+  tag: v1.28.0-alpha.75
+  pullPolicy: Never
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "bcs-monitor"
+
+
+
+service:
+  type: NodePort
+  port: 80
+
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+
+ingress:
+  enabled: false
+  className: ""
+  annotations:
+    {}
+    # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+
+
+## kube-prometheus-stack 可选prometheus-operatot 9090端口暴露为nodeport方式供外网访问
+#kube-prometheus-stack:
+#  service:
+#    type: NodePort

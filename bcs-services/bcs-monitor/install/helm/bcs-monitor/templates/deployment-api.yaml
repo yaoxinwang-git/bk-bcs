@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bcs-monitor.fullname" . }}-api
+  namespace: bcs-monitor
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/name: bcs-monitor-api
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/name: bcs-monitor-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/name: bcs-monitor-api
+    spec:
+      containers:
+        - name: bcs-monitor-api
+          image: bcs-monitor:latest
+          imagePullPolicy: Never
+          command: ["./bcs-monitor"]
+          args:
+            - "api"
+            - "--bind-address=0.0.0.0"
+            - "--http-port=10902"
+            - "--config=./config/bcs-monitor.yml"
+          ports:
+            - name: http
+              containerPort: 10902
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/config"
+              name: config-volume
+      volumes:
+        - name: config-volume
+          configMap:
+            name: bcs-monitor-config     #定义的bcs-monitor.yaml

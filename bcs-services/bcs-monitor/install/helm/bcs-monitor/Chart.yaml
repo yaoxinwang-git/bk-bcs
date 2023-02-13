@@ -1,0 +1,11 @@
+apiVersion: v2
+name: bcs-monitor
+description: A Helm chart for module bcs-monitor of BlueKing Container Service(BCS)
+type: application
+version: 1.28.0-alpha.75
+appVersion: v1.28.0-alpha.75
+##可选 如果环境缺少prometheus可选
+#dependencies:
+#  - name: kube-prometheus-stack
+#    repository: https://prometheus-community.github.io/helm-charts
+#    version: 45.0.0

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bcs-monitor.fullname" . }}-storegw
+  namespace: bcs-monitor
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/name: bcs-monitor-storegw
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/name: bcs-monitor-storegw
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/name: bcs-monitor-storegw
+    spec:
+      containers:
+        - name: bcs-monitor-storegw
+          image: bcs-monitor:latest
+          imagePullPolicy: Never
+          command: ["./bcs-monitor"]
+          args:
+            - "storegw"
+            - "--bind-address=192.168.37.133:30090"
+            - "--http-port=10902"
+            - "--grpc-port=10901"
+            - "--grpc-advertise-ip=0.0.0.0"
+            - "--config=./config/bcs-monitor.yml"
+          ports:
+            - name: http
+              containerPort: 10902
+              protocol: TCP
+            - name: grpc
+              containerPort: 10901
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/config"
+              name: config-volume
+      volumes:
+        - name: config-volume
+          configMap:
+            name: bcs-monitor-config     #定义的bcs-monitor.yaml
