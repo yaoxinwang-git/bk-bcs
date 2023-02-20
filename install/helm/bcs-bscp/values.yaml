@@ -154,13 +154,13 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-resources:
-  limits:
-    cpu: 500m
-    memory: 1Gi
-  requests:
-    cpu: 500m
-    memory: 512Mi
+#resources:
+#  limits:
+#    cpu: 500m
+#    memory: 1Gi
+#  requests:
+#    cpu: 500m
+#    memory: 512Mi
 
 autoscaling:
   enabled: false

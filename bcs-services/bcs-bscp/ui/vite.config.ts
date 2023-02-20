@@ -55,7 +55,8 @@ export default defineConfig(({ command, mode }) => {
           target: '/',
           changeOrigin: true,
         }
-      }
+      },
+      host: '0.0.0.0',
     }
   }
 })
