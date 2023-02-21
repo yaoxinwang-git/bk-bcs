@@ -72,14 +72,17 @@ spec:
           volumeMounts:
           - name: config
             mountPath: /etc/bcs-bscp
+          {{- if eq .Values.credentials.enabled true }}
           - name: etcd-certs
             mountPath: /data/bcs/cert/etcd
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
       - name: config
         configMap:
           name: bcs-bscp
+      {{- if eq .Values.credentials.enabled true }}
       - name: etcd-certs
         projected:
           defaultMode: 420
@@ -93,6 +96,7 @@ spec:
               - key: tls.key
                 path: etcd-key.pem
               name: bcs-etcd-certs
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

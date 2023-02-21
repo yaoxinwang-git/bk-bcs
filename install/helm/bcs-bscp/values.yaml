@@ -3,7 +3,8 @@ global:
   # etcd 依赖配置
   storage:
     etcd:
-      endpoints: []
+      endpoints:
+        - myetcd1:2379
   secret:
     autoGenerate: true
     #bcs server cert
@@ -20,7 +21,8 @@ global:
 # etcd 依赖配置
 storage:
   etcd:
-    endpoints: []
+    endpoints:
+      - myetcd1:2379
 
 replicaCount: 1
 
@@ -86,7 +88,7 @@ config:
   service:
     etcd:
       endpoints:
-        - bcs-etcd:2379
+        - myetcd1:2379
       tls:
         certFile:
         keyFile:
@@ -94,10 +96,11 @@ config:
 
   sharding:
     adminDatabase:
-      endpoints: 127.0.0.1:3306
-      database:
-      user:
-      password:
+      endpoints:
+        - mymariadb1:3306
+      database: bk_bscp_admin
+      user: root
+      password: rootPasswordyxw
     maxSlowLogLatencyMS: 200
     limiter:
       qps: 500
@@ -105,9 +108,12 @@ config:
 
   redisCluster:
     endpoints:
-      - bcs-services-stack-redis-master:6379
-    password:
+      - myredis-master:6379
+    password: secretpassword
     db: 1
+
+
+
 
 ui_config:
   base_conf:
@@ -128,7 +134,7 @@ ui_config:
     preferred_domains: ""
 
   etcd:
-    endpoints: bcs-etcd.bcs-system.svc.cluster.local:2379
+    endpoints: myetcd1:2379
     ca: ""
     cert: ""
     key: ""
@@ -174,3 +180,7 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+
+credentials:
+  enabled: false

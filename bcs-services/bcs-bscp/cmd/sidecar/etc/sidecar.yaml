@@ -56,7 +56,7 @@ upstream:
 appSpec:
   # bizID is the business id that these jobs works at.
   # all the jobs should be in the same business.
-  bizID: 0
+  bizID: 10
   # applications define all the applications this sidecar works for.
   # Note: at most 3 applications is allowed for one sidecar. if one of the bound
   # app is deleted while sidecar is running, sidecar will not work properly.
@@ -85,7 +85,7 @@ workspace:
   # ATTENTION: 
   # 1. THIS DIRECTORY CAN ONLY BE USED BY SIDECAR, USER MUST NOT USE THIS DIRECTORY!.
   # 2. DON'T CHANGE ANYTHING UNDER THIS DIRECTORY EXCEPT 'logs' Directory.
-  rootDirectory:
+  rootDirectory: "./"
   # purgePolicy defines the sidecar's workspace purge policy related options.
   purgePolicy:
     # sidecar will do auto clean user's temporary config files if enabled the auto clean
