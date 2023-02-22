@@ -47,7 +47,7 @@ spec:
                 fieldRef:
                   fieldPath: status.podIPs
             - name: bcsEtcdHost
-              value: "127.0.0.1:2379"
+              value: "192.168.37.150:31299"
           ports:
             - name: grpc
               containerPort: 9510
