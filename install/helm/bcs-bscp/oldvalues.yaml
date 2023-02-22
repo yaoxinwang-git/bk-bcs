@@ -1,6 +1,6 @@
 global:
   imageRegistry: ""
-  # etcd 渚濊禆閰嶇疆
+  # etcd 依赖配置
   storage:
     etcd:
       endpoints:
@@ -18,7 +18,7 @@ global:
     #gateway https cert
     bcsGatewayCerts: bcs-gateway-certs
 
-# etcd 渚濊禆閰嶇疆
+# etcd 依赖配置
 storage:
   etcd:
     endpoints:
@@ -73,7 +73,7 @@ podAnnotations: {}
 
 podSecurityContext:
   {}
-# fsGroup: 2000
+  # fsGroup: 2000
 
 securityContext:
   {}
@@ -82,26 +82,9 @@ securityContext:
   #   - ALL
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
-# runAsUser: 1000
+  # runAsUser: 1000
 
 config:
-  log:
-    # log storage directory.
-    logDir: ./log
-    # per file max size, uint: MB.
-    maxPerFileSizeMB: 1024
-    # per line max size, uint: KB.
-    maxPerLineSizeKB: 2
-    # log file max storage number.
-    maxFileNum: 5
-    # whether the restart service log is appended to the latest log file, or whether a new log file is created.
-    logAppend: false
-    # log the log to std err only, it can not be used with AlsoToStdErr at the same time.
-    toStdErr: true
-    # log the log to file and also to std err. it can not be used with ToStdErr at the same time.
-    alsoToStdErr: false
-    # log level.
-    verbosity: 1
   service:
     etcd:
       endpoints:
@@ -110,21 +93,12 @@ config:
         certFile:
         keyFile:
         caFile:
-  # data server
-  esb:
-    endpoints:
-      - http://bkapi.site.bktencent.com
-    # appCode is the blueking app code of bscp to request esb.
-    appCode: bk_bcs_app
-    # appSecret is the blueking app secret of bscp to request esb.
-    appSecret: 2dba09c0-298c-4f94-b858-9551847c2b89
-    user: admin
 
   sharding:
     adminDatabase:
       endpoints:
         - mymariadb1:3306
-      database: bscp
+      database: bk_bscp_admin
       user: root
       password: rootPasswordyxw
     maxSlowLogLatencyMS: 200
@@ -138,31 +112,7 @@ config:
     password: secretpassword
     db: 1
 
-  # feed server
-  repository:
-    endpoints:
-      - http://bkrepo.site.bktencent.com
-    token: MmVhNjE0NzhlNjNkNDZjMmI4YzRjODcxMGQxOWNiNGQ6NWE0MjJkM2RlNGY4OTc2Zjc4NGFmYmEyZTYxYjM5
-    project: bscp
-    user: alkaidchen
-    downstream:
-      bounceIntervalHour: 48
 
-  # sidecar
-  upstream:
-    endpoints:
-      - bcs-bscp-feedserver:9510
-    authentication:
-      user: bcs-bscp
-      token: bcs-bscp
-  appSpec:
-    bizID: 2 # 蓝鲸项目
-    applications:
-      - appID: 1 # 手动调用API创建
-        namespace: ""
-        uid: 10
-  workspace:
-    rootDirectory: /tmp
 
 
 ui_config:
@@ -171,7 +121,7 @@ ui_config:
     app_secret: ""
     time_zone: Asia/Shanghai
     language_code: en
-    run_env: dev
+    run_env: prod
 
   bcs_conf:
     host: ""
@@ -199,7 +149,7 @@ ingress:
   annotations:
     {}
     # kubernetes.io/ingress.class: nginx
-  # kubernetes.io/tls-acme: "true"
+    # kubernetes.io/tls-acme: "true"
   hosts:
     - host: chart-example.local
       paths:

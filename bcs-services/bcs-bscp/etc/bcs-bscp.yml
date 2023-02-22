@@ -21,7 +21,7 @@ log:
 service:
   etcd:
     endpoints:
-      - 127.0.0.1:2379
+      - 192.168.37.150:31299
     tls:
       certFile: ""
       keyFile: ""
@@ -30,41 +30,43 @@ service:
 # data server
 esb:
   endpoints:
-    - http://127.0.0.1:12345
+    - http://bkapi.site.bktencent.com
   # appCode is the blueking app code of bscp to request esb.
   appCode: bk_bcs_app
   # appSecret is the blueking app secret of bscp to request esb.
-  appSecret: xxx
+  appSecret: 2dba09c0-298c-4f94-b858-9551847c2b89
   user: admin
 
 # cache server
 sharding:
   adminDatabase:
     endpoints:
-      - 127.0.0.1:3306
+      - 192.168.37.150:32134
     database: bk_bscp_admin
     user: root
-    password:
+    password: rootPasswordyxw
   maxSlowLogLatencyMS: 200
   limiter:
     qps: 500
     burst: 500
+#loginAuth:
+#  host: http://site.bktencent.com
 
 redisCluster:
   endpoints:
-    - 127.0.0.1:6379
-  password:
+    - 192.168.37.150:30519
+  password: secretpassword
   db: 1
 
 # feed server
 repository:
   endpoints:
-    - xxx
-  token: xx
+    - http://bkrepo.site.bktencent.com
+  token: MmVhNjE0NzhlNjNkNDZjMmI4YzRjODcxMGQxOWNiNGQ6NWE0MjJkM2RlNGY4OTc2Zjc4NGFmYmEyZTYxYjM5
   project: bscp
-  user: xx
-downstream:
-  bounceIntervalHour: 48
+  user: alkaidchen
+  downstream:
+    bounceIntervalHour: 48
 
 # sidecar
 upstream:
