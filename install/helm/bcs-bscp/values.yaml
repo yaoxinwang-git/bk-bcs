@@ -131,6 +131,8 @@ config:
     limiter:
       qps: 500
       burst: 500
+  loginAuth:
+    host: http://192.168.37.150
 
   redisCluster:
     endpoints:
@@ -145,8 +147,9 @@ config:
     token: MmVhNjE0NzhlNjNkNDZjMmI4YzRjODcxMGQxOWNiNGQ6NWE0MjJkM2RlNGY4OTc2Zjc4NGFmYmEyZTYxYjM5
     project: bscp
     user: alkaidchen
-    downstream:
-      bounceIntervalHour: 48
+    
+  downstream:
+    bounceIntervalHour: 48
 
   # sidecar
   upstream:
@@ -174,7 +177,7 @@ ui_config:
     run_env: dev
 
   bcs_conf:
-    host: ""
+    host: http://192.168.37.150
     token: ""
     jwt_public_key: ""
 
@@ -188,7 +191,14 @@ ui_config:
     ca: ""
     cert: ""
     key: ""
+  
+  loginAuth:
+    host: http://192.168.37.150 
 
+  frontend_conf:
+    hosts:
+      devops_bcs_api_url: 
+  
 service:
   type: ClusterIP
   port: 80
