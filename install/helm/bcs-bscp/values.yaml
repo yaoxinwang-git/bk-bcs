@@ -4,7 +4,7 @@ global:
   storage:
     etcd:
       endpoints:
-        - myetcd1:2379
+        - bcs-bscp-etcd:2379
   secret:
     autoGenerate: true
     #bcs server cert
@@ -22,7 +22,7 @@ global:
 storage:
   etcd:
     endpoints:
-      - myetcd1:2379
+      - bcs-bscp-etcd:2379
 
 replicaCount: 1
 
@@ -105,7 +105,7 @@ config:
   service:
     etcd:
       endpoints:
-        - myetcd1:2379
+        - bcs-bscp-etcd:2379
       tls:
         certFile:
         keyFile:
@@ -123,10 +123,10 @@ config:
   sharding:
     adminDatabase:
       endpoints:
-        - mymariadb1:3306
+        - bcs-bscp-mariadb:3306
       database: bscp
       user: root
-      password: rootPasswordyxw
+      password: root
     maxSlowLogLatencyMS: 200
     limiter:
       qps: 500
@@ -136,8 +136,8 @@ config:
 
   redisCluster:
     endpoints:
-      - myredis-master:6379
-    password: secretpassword
+      - bcs-bscp-redis-master:6379
+    password:
     db: 1
 
   # feed server
@@ -187,7 +187,7 @@ ui_config:
     preferred_domains: ""
 
   etcd:
-    endpoints: myetcd1:2379
+    endpoints: bcs-bscp-etcd:2379
     ca: ""
     cert: ""
     key: ""
@@ -244,3 +244,33 @@ affinity: {}
 
 credentials:
   enabled: false
+
+
+redis:
+  architecture: standalone
+  auth:
+    enabled: false
+    #auth.enable 为true可配置密码
+    password:
+  master:
+    service:
+      type: NodePort
+
+etcd:
+  replicaCount: 1
+  auth:
+    rbac:
+      create: false
+    token:
+      type: simple
+  persistence:
+    enabled: false
+
+mariadb:
+  auth:
+    rootPassword: root
+    database: bscp
+  primary:
+    service:
+      type: NodePort
+  initdbScriptsConfigMap: bcs-bscp-mariadb-initscripts  #配置初始化sql脚本，指定configmapName
