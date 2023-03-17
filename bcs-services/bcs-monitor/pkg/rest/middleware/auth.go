@@ -121,6 +121,7 @@ func NsScopeAuthorization() gin.HandlerFunc {
 
 // initContextWithDevEnv Dev环境, 可以设置环境变量
 func initContextWithDevEnv(c *rest.Context) bool {
+	os.Setenv("BCS_MONITOR_USERNAME", "testyxw")
 	if config.G.Base.RunEnv != config.DevEnv {
 		return false
 	}

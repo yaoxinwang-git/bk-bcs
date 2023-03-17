@@ -16,6 +16,7 @@ package api
 import (
 	"context"
 	"encoding/json"
+	service_monitor "github.com/Tencent/bk-bcs/bcs-services/bcs-monitor/pkg/api/servicemonitor"
 	"net/http"
 	"path"
 
@@ -190,6 +191,10 @@ func registerMetricsRoutes(engine *gin.RouterGroup) {
 			rest.RestHandlerFunc(metrics.ContainerDiskReadTotal))
 		route.GET("/namespaces/:namespace/pods/:pod/containers/:container/disk_write_total",
 			rest.RestHandlerFunc(metrics.ContainerDiskWriteTotal))
+
+		route.GET("/service_monitors",
+			rest.RestHandlerFunc(service_monitor.ListServiceMonitors))
+
 	}
 }
 

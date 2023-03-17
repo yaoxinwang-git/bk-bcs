@@ -1,0 +1,66 @@
+base_conf:
+  app_code: "xx"
+  app_secret: "xx"
+  time_zone: "Asia/Shanghai"
+  language_code: en
+  run_env: dev
+  managers: []
+
+logging:
+  stdout: true
+  level: info
+  format: logfmt
+  filename: ""
+  max_size: 1024 # 单位 Mb
+  max_age: 1 # 单位天
+  max_backups: 7
+
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  password: xx
+  db: 0
+
+
+auth_conf:
+  host: xx
+  is_gateway: xx
+  ssm_host: ""
+
+bkapigw_conf:
+  host: ""
+  jwt_public_key: ""
+
+bcs_conf:
+  host: "http://bcs-api.site.bktencent.com"
+  token: "qf70DbohQDNgPFKgTwbPaKlctZrzibAu"
+  jwt_public_key: ""
+  verify: false
+
+
+web:
+  route_prefix: "/bcsapi/v4/monitor"
+  host: http://ten.devcloud.com:11902
+
+query_conf:
+  host: http://ten.devcloud.com:11902
+
+
+query_store_conf:
+  static_configs:
+    - targets:
+        - xx:30911
+  # http_sd_configs:
+  #   - url: xx
+  #     bearer_token: xx
+
+storegw:
+  - type: PROMETHEUS
+    config: {}
+
+etcd:
+#  endpoints: "127.0.0.1:2379"
+  endpoints: ""
+  ca: ""
+  cert: ""
+  key: ""
